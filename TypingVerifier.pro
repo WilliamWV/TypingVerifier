@@ -30,5 +30,4 @@ SOURCES += \
 HEADERS += \
         verifier.h
 
-FORMS += \
-        verifier.ui
+FORMS +=
