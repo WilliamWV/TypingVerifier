@@ -1,5 +1,13 @@
 #include "similarityanalizer.h"
 
+/**
+    Class Constructor
+    SimilarityAnalizer::SimilarityAnalizer(string referenceFile)
+    @brief construct the class with an optional reference to a
+    file that will be used as a dictionary with one words per line
+    @param referenceFile: path of the dictionary file
+
+*/
 SimilarityAnalizer::SimilarityAnalizer(string referenceFile)
 {
     this->referenceWords.clear();
@@ -8,6 +16,17 @@ SimilarityAnalizer::SimilarityAnalizer(string referenceFile)
 
 }
 
+/**
+    int SimilarityAnalizer::stringDistance(string s1, string s2){
+    @brief calculates the levenshtein distance with the well-known
+    dynamic programming algorithm
+    @param s1: first string
+    @param s2: second string
+    @return distance of the strings that represents the number of
+    changes (insertion, deletion or alteration) to transform one
+    string on the other
+
+*/
 int SimilarityAnalizer::stringDistance(string s1, string s2){
     int s1Size = s1.size();
     int s2Size = s2.size();
@@ -36,6 +55,16 @@ int SimilarityAnalizer::stringDistance(string s1, string s2){
 
 }
 
+/**
+    vector<string> SimilarityAnalizer::closestStrings(string src, unsigned int minReturnedStr)
+    @brief based on the reference dictionary returns the closest words based
+    on the distance calculated by the function stringDistance of this class
+    @param src: string to compare with reference
+    @param minReturnedStr: minimum number of returned strings, that is the nth closest
+    strings, the number of returned strings may be greater because if there is more words
+    with the same distace all are returned
+    @returns vector of the closest strings sorted from more closest to less closest
+*/
 vector<string> SimilarityAnalizer::closestStrings(string src, unsigned int minReturnedStr)
 {
 
@@ -87,6 +116,11 @@ vector<string> SimilarityAnalizer::closestStrings(string src, unsigned int minRe
 
     return answer;
 }
+/**
+    void SimilarityAnalizer::changeReferenceFile(string referenceFile)
+    @brief change the reference file
+    @param referenceFile: path to the new reference file
+*/
 void SimilarityAnalizer::changeReferenceFile(string referenceFile)
 {
     vector<string> backup = this->referenceWords;
@@ -97,6 +131,13 @@ void SimilarityAnalizer::changeReferenceFile(string referenceFile)
     }
 }
 
+/**
+    bool SimilarityAnalizer::containsReferenceTo(string src)
+    @brief check if there is reference to some string
+    @param string to verify if there is reference
+    @returns true if exists reference, false otherwise
+
+*/
 bool SimilarityAnalizer::containsReferenceTo(string src)
 {
     for (vector<string>::iterator it= this->referenceWords.begin();
@@ -108,6 +149,14 @@ bool SimilarityAnalizer::containsReferenceTo(string src)
     return false;
 }
 
+
+/**
+    bool SimilarityAnalizer::readReferenceFile(string refFile)
+    @brief read the file passed as reference and construct the
+    reference vector
+    @param refFile: path of the file to read
+    @returns true if it was sucessful, false otherwise
+*/
 bool SimilarityAnalizer::readReferenceFile(string refFile)
 {
     try{
