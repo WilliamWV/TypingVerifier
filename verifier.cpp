@@ -114,8 +114,9 @@ void Verifier::on_text_changed()
     QStringList newWords = this->getWords();
 
     if(this->autoVerify)
-        //not yet implemented
-    {}
+    {
+
+    }
 
 }
 void Verifier::on_language_cb_modified()
@@ -128,8 +129,21 @@ void Verifier::on_auto_verify_changed()
 }
 void Verifier::on_verify_button_clicked()
 {
+    QStringList words = this->getWords();
+    SimilarityAnalizer* sa = new SimilarityAnalizer("testDict.txt");
+    QStringList mistakes;
 
-    std::cout<<"Verify Not yet implemented"<<endl;
+    for(int i = 0; i<words.size(); i++)
+    {
+        QString currentWords = words.at(i);
+        if(!sa->containsReferenceTo(currentWords.toStdString()))
+        {
+            mistakes.append(currentWords);
+        }
+    }
+    QMessageBox dialog;
+    QString results = this->buildVerificationAns(mistakes);
+    dialog.information(this, tr("Results"), results);
 }
 void Verifier::on_load_button_clicked()
 {
@@ -180,7 +194,28 @@ QStringList Verifier::getWords()
 {
     QRegExp sep("[\\W_]");
     QStringList strList = this->currentText.split(sep);
+    strList.removeAll(QString(""));
     return strList;
+}
+
+QString Verifier::buildVerificationAns(QStringList mistakes)
+{
+    int n = mistakes.size();
+    if(n == 0)
+        return QString("Nothing to correct");
+    else
+    {
+        QString results("The following words are incorrect: \n");
+        for(int i = 0; i<n; i++)
+        {
+            results
+                    .append(QString(" * "))
+                    .append(mistakes.at(i))
+                    .append(QChar('\n'));
+        }
+        return results;
+
+    }
 }
 
 

@@ -1,6 +1,7 @@
 #ifndef VERIFIER_H
 #define VERIFIER_H
 
+#include "similarityanalizer.h"
 #include <QMainWindow>
 #include <QGridLayout>
 #include <QPushButton>
@@ -75,6 +76,7 @@ private:
     QStringList getWords();
     void connectHandlers();
     void generateError(QString message);
+    QString buildVerificationAns(QStringList mistakes);
 
 };
 
