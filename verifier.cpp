@@ -5,6 +5,7 @@ Verifier::Verifier(QWidget *parent) :
 {
     this->initializeGridLayout();
     this->createWidgets();
+    this->connectHandlers();
     this->setLayout(this->gridLayout);
     this->show();
 }
@@ -51,6 +52,9 @@ void Verifier::createVerifyWidgets()
     this->gridLayout->addWidget(
                 this->autoVerificationCHB, AUTOVERIFY_CHB_ROW, COMMANDS_COL);
 
+    this->autoVerify = false;
+
+
 }
 void Verifier::createTextView()
 {
@@ -81,6 +85,104 @@ void Verifier::initializeGridLayout()
     //redimentioned
     this->gridLayout->setColumnStretch(TEXT_COL, 1);
 }
+
+void Verifier::connectHandlers()
+{
+    connect(
+       this->loadPB, SIGNAL(clicked(bool)),
+       this, SLOT(on_load_button_clicked()));
+    connect(
+       this->savePB, SIGNAL(clicked(bool)),
+       this, SLOT(on_save_button_clicked()));
+    connect(
+       this->languageCB, SIGNAL(currentIndexChanged(int)),
+       this, SLOT(on_language_cb_modified()));
+    connect(
+       this->verifyPB, SIGNAL(clicked(bool)),
+       this, SLOT(on_verify_button_clicked()));
+    connect(
+       this->autoVerificationCHB, SIGNAL(toggled(bool)),
+       this, SLOT(on_auto_verify_changed()));
+    connect(
+       this->textView, SIGNAL(textChanged()),
+       this, SLOT(on_text_changed()));
+}
+
+void Verifier::on_text_changed()
+{
+    this->currentText = this->textView->toPlainText();
+    QStringList newWords = this->getWords();
+
+    if(this->autoVerify)
+        //not yet implemented
+    {}
+
+}
+void Verifier::on_language_cb_modified()
+{
+    std::cout<<"Lang Not yet implemented"<<endl;
+}
+void Verifier::on_auto_verify_changed()
+{
+    this->autoVerify = this->autoVerificationCHB->isChecked();
+}
+void Verifier::on_verify_button_clicked()
+{
+
+    std::cout<<"Verify Not yet implemented"<<endl;
+}
+void Verifier::on_load_button_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+            tr("Choose File"), "",
+            tr("TXT file (*.txt)"));
+    ifstream file;
+    try
+    {
+        file.open(fileName.toStdString());
+        std::stringstream textBuff;
+        textBuff<<file.rdbuf();
+        this->textView->setText(QString::fromStdString(textBuff.str()));
+
+    }catch(exception ex)
+    {
+        this->generateError("Failed to load the file");
+        cout<<ex.what();
+    }
+
+}
+void Verifier::on_save_button_clicked()
+{
+    QString fileName = QFileDialog::getSaveFileName(this,
+            tr("Save Text"), "",
+            tr("TXT file (*.txt);;All Files (*)"));
+    ofstream file;
+    try{
+        file.open(fileName.toStdString());
+        file<<this->currentText.toStdString();
+    }
+    catch(exception ex)
+    {
+        this->generateError(tr("Failed to save the text"));
+        cout<<ex.what();
+    }
+}
+
+
+void Verifier::generateError(QString message)
+{
+    QMessageBox errorBox;
+    errorBox.critical(this, "Error", message);
+}
+
+
+QStringList Verifier::getWords()
+{
+    QRegExp sep("[\\W_]");
+    QStringList strList = this->currentText.split(sep);
+    return strList;
+}
+
 
 Verifier::~Verifier()
 {

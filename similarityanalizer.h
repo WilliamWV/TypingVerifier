@@ -12,6 +12,7 @@ using namespace std;
 class SimilarityAnalizer
 {
 public:
+
     SimilarityAnalizer(string referenceFile = NULL);
     int stringDistance(string s1, string s2);
     vector<string> closestStrings(string src, unsigned int minReturnedStr = 1);

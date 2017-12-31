@@ -9,6 +9,13 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QWidgetItem>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <fstream>
+#include <sstream>
 
 #define C2_MIN_WIDTH 100
 #define C1_MIN_WIDTH 200
@@ -27,6 +34,7 @@
 #define COMMANDS_COL 1
 #define TEXT_COL 0
 
+using namespace std;
 
 class Verifier : public QWidget
 {
@@ -35,6 +43,14 @@ class Verifier : public QWidget
 public:
     explicit Verifier(QWidget *parent = 0);
     ~Verifier();
+
+private slots:
+    void on_text_changed();
+    void on_language_cb_modified();
+    void on_auto_verify_changed();
+    void on_verify_button_clicked();
+    void on_load_button_clicked();
+    void on_save_button_clicked();
 
 private:
     QGridLayout *gridLayout;
@@ -47,12 +63,19 @@ private:
     QCheckBox *autoVerificationCHB;
     QWidgetItem *textItem;
     QWidgetItem *verifyPBItem;
+    QString currentText;
+    bool autoVerify;
+
     void createWidgets();
     void createFileManagWidgets();
     void createLanguageChooser();
     void createVerifyWidgets();
     void createTextView();
     void initializeGridLayout();
+    QStringList getWords();
+    void connectHandlers();
+    void generateError(QString message);
+
 };
 
 
