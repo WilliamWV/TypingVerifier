@@ -26,10 +26,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         verifier.cpp \
-    similarityanalizer.cpp
+    similarityanalizer.cpp \
+    suggestion.cpp
 
 HEADERS += \
         verifier.h \
-    similarityanalizer.h
+    similarityanalizer.h \
+    suggestion.h
 
 FORMS +=
