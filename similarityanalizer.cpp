@@ -73,24 +73,7 @@ vector<string> SimilarityAnalizer::closestStrings(string src, unsigned int minRe
         minReturnedStr = this->referenceWords.size();
     }
 
-    map<int, vector<string>> distances;
-    for (vector<string>::iterator str= this->referenceWords.begin();
-         str!= this->referenceWords.end(); ++str)
-    {
-        int currentDist = this->stringDistance(src, *str);
-
-        try
-        {
-            distances[currentDist].push_back(*str);
-        }
-        catch(exception ex)
-        {
-            vector<string> initializer;
-            initializer.push_back(*str);
-            distances[currentDist] = initializer;
-        }
-    }
-
+    map<int, vector<string>> distances = this->sortedDistances(src);
     vector<string> answer;
     int currentDistance = 0;
     unsigned int wordsAdded = 0;
@@ -115,6 +98,11 @@ vector<string> SimilarityAnalizer::closestStrings(string src, unsigned int minRe
     }
 
     return answer;
+}
+
+vector<string> closestThan(string src, unsigned int threshold)
+{
+    //in construction
 }
 /**
     void SimilarityAnalizer::changeReferenceFile(string referenceFile)
@@ -175,4 +163,34 @@ bool SimilarityAnalizer::readReferenceFile(string refFile)
         cout<<"failed to read reference file";
         return false;
     }
+}
+/**
+    map<int, vector<string>> sortedDistances()
+    @brief generates a map with distance integers associated
+    with a vector of words from reference that have rhis distance
+    from the source string
+    @param src: string to compare with words from reference
+    @returns a map associatting distance with reference words
+
+*/
+map<int, vector<string>> sortedDistances(string src)
+{
+    map<int, vector<string>> distances;
+    for (vector<string>::iterator str= this->referenceWords.begin();
+         str!= this->referenceWords.end(); ++str)
+    {
+        int currentDist = this->stringDistance(src, *str);
+
+        try
+        {
+            distances[currentDist].push_back(*str);
+        }
+        catch(exception ex)
+        {
+            vector<string> initializer;
+            initializer.push_back(*str);
+            distances[currentDist] = initializer;
+        }
+    }
+    return distances;
 }
