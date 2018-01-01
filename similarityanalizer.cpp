@@ -100,9 +100,35 @@ vector<string> SimilarityAnalizer::closestStrings(string src, unsigned int minRe
     return answer;
 }
 
-vector<string> closestThan(string src, unsigned int threshold)
+/**
+    vector<string> closestThan(string src, unsigned int threshold)
+    @brief return a vector with the reference words which distances
+    from reference string is at most the value of threshold, the
+    vector is sorted ascendingly based on distance
+    @param src: source string
+    @param threshold: maximum accepted distance
+    @returns vector with these reference strings
+*/
+
+vector<string> closestThan(string src, int threshold)
 {
-    //in construction
+    if(threshold<0)
+        threshold = 0;
+    map<int, vector<string>> distances = this->sortedDistances(src);
+    vector<string> answer;
+    for(int i = 0; i<=threshold; i++)
+    {
+        try{
+            answer.insert(
+                        std::end(answer),
+                        std::begin(distances[i]),
+                        std::end(distances[i]));
+        }catch(exception ex)
+        {
+            //do nothing
+        }
+    }
+    return answer;
 }
 /**
     void SimilarityAnalizer::changeReferenceFile(string referenceFile)

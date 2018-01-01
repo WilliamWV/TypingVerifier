@@ -16,12 +16,13 @@ public:
     SimilarityAnalizer(string referenceFile = NULL);
     int stringDistance(string s1, string s2);
     vector<string> closestStrings(string src, unsigned int minReturnedStr = 1);
-    vector<string> closestThan(string src, unsigned int threshold);
+    vector<string> closestThan(string src, int threshold);
     void changeReferenceFile(string referenceFile);
     bool containsReferenceTo(string src);
 private:
     vector<string> referenceWords;
     bool readReferenceFile(string refFile);
+    map<int, vector<string>> sortedDistances(string src);
     bool referencesReady;
 };
 
