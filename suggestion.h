@@ -33,7 +33,7 @@ class Suggestion : public QWidget
 {
     Q_OBJECT
 public:
-    explicit Suggestion(QWidget *parent = nullptr, QString typed, SimilarityAnalizer *refAnalizer);
+    explicit Suggestion(QString typed, SimilarityAnalizer *refAnalizer, QWidget *parent = nullptr);
     void updateWord(QString newWord);
 
 signals:
@@ -61,7 +61,7 @@ private:
     QLabel *suggestionTitle;
     QGridLayout *gridLayout;
     QWidgetItem *suggestionItem;
-    QWIdgetItem *titleItem;
+    QWidgetItem *titleItem;
     QString currentSuggestion;
     QString currentSrcWord;
     SimilarityAnalizer *sAnalizer;

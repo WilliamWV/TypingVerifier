@@ -35,6 +35,7 @@
 
 #define COMMANDS_COL 1
 #define TEXT_COL 0
+#define EMPTY_STRING QString("")
 
 using namespace std;
 
@@ -72,7 +73,7 @@ private:
     QWidgetItem *verifyPBItem;
     QString currentText;
     bool autoVerify;
-    map<QString, int> currentWrongWords;
+    vector<int> wrongWordsIndex;
     Suggestion *sug;
     SimilarityAnalizer *sAnalizer;
     QStringList words;
@@ -86,9 +87,11 @@ private:
     QStringList getWordsFromText();
     void connectHandlers();
     void generateError(QString message);
-    QString buildVerificationAns(QStringList mistakes);
+    QString buildVerificationAns(vector<int> mistakes);
     QString getNextMistake();
-
+    vector<int> getWrongWords();
+    void updateText(int wordIndex, QString srcString, QString suggestion);
+    int findInitialWordCharIndex(int wordIndex);
 };
 
 

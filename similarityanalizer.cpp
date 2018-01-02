@@ -102,7 +102,7 @@ vector<string> SimilarityAnalizer::closestStrings(string src, unsigned int minRe
 }
 
 /**
-    vector<string> closestThan(string src, unsigned int threshold)
+    vector<string> SimilarityAnalizer::closestThan(string src, unsigned int threshold)
     @brief return a vector with the reference words which distances
     from reference string is at most the value of threshold, the
     vector is sorted ascendingly based on distance
@@ -111,7 +111,7 @@ vector<string> SimilarityAnalizer::closestStrings(string src, unsigned int minRe
     @returns vector with these reference strings
 */
 
-vector<string> closestThan(string src, int threshold)
+vector<string> SimilarityAnalizer::closestThan(string src, int threshold)
 {
     if(threshold<0)
         threshold = 0;

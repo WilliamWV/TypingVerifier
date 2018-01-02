@@ -1,6 +1,6 @@
 #include "suggestion.h"
 
-Suggestion::Suggestion(QWidget *parent, QString typed, SimilarityAnalizer *refAnalizer) :
+Suggestion::Suggestion(QString typed, SimilarityAnalizer *refAnalizer, QWidget *parent) :
     QWidget(parent)
 {
     this->initializeGridLayout();
@@ -9,12 +9,12 @@ Suggestion::Suggestion(QWidget *parent, QString typed, SimilarityAnalizer *refAn
     this->connectHandlers();
     this->setLayout(this->gridLayout);
     this->show();
-    this->createSuggestions(typed);
+    this->createSuggestion(typed);
     this->currentSrcWord = typed;
 
 }
 
-void Suggestion::intializeGridLayout()
+void Suggestion::initializeGridLayout()
 {
     this->gridLayout = new QGridLayout();
     this->gridLayout->setColumnMinimumWidth(SUGGESTION_COL, SUGGESTION_COL_W);
@@ -44,7 +44,7 @@ void Suggestion::connectHandlers()
         this, SLOT(onIgnorePBClicked()));
     connect(
         this->suggestionChooser, SIGNAL(currentRowChanged(int)),
-        this, SLOT(onSuggestedWordChanged(int));
+        this, SLOT(onSuggestedWordChanged(int)));
 
 }
 void Suggestion::createWidgets(QString typed)
@@ -86,13 +86,13 @@ void Suggestion::createSuggestion(QString typed)
 
     vector<string> suggestions =
             this->sAnalizer->closestThan(
-                typed, BASE_SIMILARITY_THRESHOLD);
+                typed.toStdString(), BASE_SIMILARITY_THRESHOLD);
     if(suggestions.size()<MIN_SUGGESTED_WORD)
         suggestions =
                 this->sAnalizer->closestStrings(
-                    typed, MIN_SUGGESTED_WORD);
+                    typed.toStdString(), MIN_SUGGESTED_WORD);
 
-    for(int i = 0; i<suggestions.size(); i++)
+    for(unsigned int i = 0; i<suggestions.size(); i++)
     {
         this->suggestionChooser->addItem(
                     QString::fromStdString(suggestions.at(i)));
@@ -113,7 +113,7 @@ void Suggestion::updateWord(QString newWord)
                 TITLE_ROW, SUGGESTION_COL,
                 1, TITLE_WIDHT);
 
-    this->createSuggestions(newWord);
+    this->createSuggestion(newWord);
     this->currentSrcWord = newWord;
 }
 

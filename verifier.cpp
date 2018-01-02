@@ -6,6 +6,7 @@ Verifier::Verifier(QWidget *parent) :
     this->initializeGridLayout();
     this->createWidgets();
     this->connectHandlers();
+    this->sAnalizer = new SimilarityAnalizer("testDict.txt");
     this->setLayout(this->gridLayout);
     this->show();
 }
@@ -205,7 +206,7 @@ vector<int> Verifier::getWrongWords()
     return answer;
 }
 
-QString Verifier::buildVerificationAns(QStringList mistakes)
+QString Verifier::buildVerificationAns(vector<int> mistakes)
 {
     int n = mistakes.size();
     if(n == 0)
@@ -217,7 +218,7 @@ QString Verifier::buildVerificationAns(QStringList mistakes)
         {
             results
                     .append(QString(" * "))
-                    .append(mistakes.at(i))
+                    .append(this->words[mistakes.at(i)])
                     .append(QChar('\n'));
         }
         return results;
@@ -234,7 +235,17 @@ void Verifier::on_suggest_replace(QString srcString, QString suggestion)
 }
 void Verifier::on_suggest_replace_all(QString srcString, QString suggestion)
 {
-
+    vector<int> wordsIndex;
+    int size = srcString.size();
+    for(unsigned int i = 0; i<this->wrongWordsIndex.size(); i++)
+    {
+        QString onText = this->currentText.mid(this->wrongWordsIndex[i], size);
+        if(onText == srcString)
+        {
+            this->words.replace(this->wrongWordsIndex[i], suggestion);
+            this->updateText(this->wrongWordsIndex[i], srcString, suggestion);
+        }
+    }
 }
 void Verifier::on_suggest_addToDict(QString srcString)
 {
@@ -253,8 +264,9 @@ void Verifier::updateText(int wordIndex, QString srcString, QString suggestion)
 {
     int initWordCharIndex = this->findInitialWordCharIndex(wordIndex);
 
-    QStringRef onText(this->currentText, initWordCharIndex, srcString.size());
-    if (onText.toString() != srcString)
+    QString onText = this->currentText.mid(initWordCharIndex, srcString.size());
+
+    if (onText != srcString)
     {
         this->generateError("String on text and string found are not the same");
     }
@@ -271,9 +283,9 @@ int Verifier::findInitialWordCharIndex(int wordIndex)
     bool found = false;
     bool inWord = false;
 
-    int charIndex = 0;
+    int index = 0;
     int wordCounter = -1; // -1 because it will be increased when a word is found
-
+    int initWordCharIndex;
     while(! found)
     {
         QChar currentChar = this->currentText[index];
@@ -298,6 +310,7 @@ int Verifier::findInitialWordCharIndex(int wordIndex)
         }
         index++;
     }
+    return initWordCharIndex;
 }
 
 QString Verifier::getNextMistake()
@@ -306,7 +319,7 @@ QString Verifier::getNextMistake()
         return EMPTY_STRING;
 
     this->wrongWordsIndex.erase(this->wrongWordsIndex.begin());
-    QString next = this->wrongWordsIndex[0];
+    QString next = this->words[this->wrongWordsIndex[0]];
 
     return next;
 }
