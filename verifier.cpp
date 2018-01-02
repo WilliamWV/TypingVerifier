@@ -108,10 +108,11 @@ void Verifier::connectHandlers()
        this, SLOT(on_text_changed()));
 }
 
+
 void Verifier::on_text_changed()
 {
     this->currentText = this->textView->toPlainText();
-    QStringList newWords = this->getWords();
+    QStringList newWords = this->getWordsFromText();
 
     if(this->autoVerify)
     {
@@ -129,20 +130,11 @@ void Verifier::on_auto_verify_changed()
 }
 void Verifier::on_verify_button_clicked()
 {
-    QStringList words = this->getWords();
-    SimilarityAnalizer* sa = new SimilarityAnalizer("testDict.txt");
-    QStringList mistakes;
+    this->words = this->getWordsFromText();
+    this->wrongWordsIndex = this->getWrongWords();
 
-    for(int i = 0; i<words.size(); i++)
-    {
-        QString currentWords = words.at(i);
-        if(!sa->containsReferenceTo(currentWords.toStdString()))
-        {
-            mistakes.append(currentWords);
-        }
-    }
     QMessageBox dialog;
-    QString results = this->buildVerificationAns(mistakes);
+    QString results = this->buildVerificationAns(this->wrongWordsIndex);
     dialog.information(this, tr("Results"), results);
 }
 void Verifier::on_load_button_clicked()
@@ -190,12 +182,27 @@ void Verifier::generateError(QString message)
 }
 
 
-QStringList Verifier::getWords()
+QStringList Verifier::getWordsFromText()
 {
     QRegExp sep("[\\W_]");
     QStringList strList = this->currentText.split(sep);
     strList.removeAll(QString(""));
     return strList;
+}
+
+vector<int> Verifier::getWrongWords()
+{
+
+    vector<int> answer;
+    for(int i = 0; i<this->words.size(); i++)
+    {
+        QString currentWords = words.at(i);
+        if(!this->sAnalizer->containsReferenceTo(currentWords.toStdString()))
+        {
+            answer.push_back(i);
+        }
+    }
+    return answer;
 }
 
 QString Verifier::buildVerificationAns(QStringList mistakes)
@@ -218,6 +225,91 @@ QString Verifier::buildVerificationAns(QStringList mistakes)
     }
 }
 
+void Verifier::on_suggest_replace(QString srcString, QString suggestion)
+{
+    int wordIndex = this->wrongWordsIndex[0];
+    this->words.replace(wordIndex, suggestion);
+    this->updateText(wordIndex, srcString, suggestion);
+
+}
+void Verifier::on_suggest_replace_all(QString srcString, QString suggestion)
+{
+
+}
+void Verifier::on_suggest_addToDict(QString srcString)
+{
+    string fileName = this->sAnalizer->getRefFileName();
+    ofstream file;
+    file.open(fileName);
+    file<<"\n"<<srcString.toStdString();
+}
+void Verifier::on_suggest_requiredNext()
+{
+    QString next = this->getNextMistake();
+    this->sug->updateWord(next);
+}
+
+void Verifier::updateText(int wordIndex, QString srcString, QString suggestion)
+{
+    int initWordCharIndex = this->findInitialWordCharIndex(wordIndex);
+
+    QStringRef onText(this->currentText, initWordCharIndex, srcString.size());
+    if (onText.toString() != srcString)
+    {
+        this->generateError("String on text and string found are not the same");
+    }
+    else
+    {
+        this->currentText.replace(initWordCharIndex, srcString.size(), suggestion);
+        this->textView->setText(this->currentText);
+    }
+
+}
+
+int Verifier::findInitialWordCharIndex(int wordIndex)
+{
+    bool found = false;
+    bool inWord = false;
+
+    int charIndex = 0;
+    int wordCounter = -1; // -1 because it will be increased when a word is found
+
+    while(! found)
+    {
+        QChar currentChar = this->currentText[index];
+        if(inWord)
+        {
+            if(currentChar.isPunct() || currentChar.isSpace())
+            {
+                inWord = false;
+            }
+        }
+        else{
+            if(currentChar.isLetterOrNumber())
+            {
+                inWord = true;
+                wordCounter++;
+                if(wordCounter == wordIndex)
+                {
+                    initWordCharIndex = index;
+                    found = true;
+                }
+            }
+        }
+        index++;
+    }
+}
+
+QString Verifier::getNextMistake()
+{
+    if(this->wrongWordsIndex.empty())
+        return EMPTY_STRING;
+
+    this->wrongWordsIndex.erase(this->wrongWordsIndex.begin());
+    QString next = this->wrongWordsIndex[0];
+
+    return next;
+}
 
 Verifier::~Verifier()
 {

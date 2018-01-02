@@ -13,7 +13,8 @@ SimilarityAnalizer::SimilarityAnalizer(string referenceFile)
     this->referenceWords.clear();
 
     this->referencesReady = this->readReferenceFile(referenceFile);
-
+    if(this->referencesReady)
+        this->refFileName = referenceFile;
 }
 
 /**
@@ -142,7 +143,11 @@ void SimilarityAnalizer::changeReferenceFile(string referenceFile)
     {
         cout<<"Failed to change reference, changing back to previous reference"<<endl;
         this->referenceWords = backup;
+    }else
+    {
+        this->refFileName = referenceFile;
     }
+
 }
 
 /**
@@ -191,7 +196,7 @@ bool SimilarityAnalizer::readReferenceFile(string refFile)
     }
 }
 /**
-    map<int, vector<string>> sortedDistances()
+    map<int, vector<string>> SimilarityAnalizer::sortedDistances()
     @brief generates a map with distance integers associated
     with a vector of words from reference that have rhis distance
     from the source string
@@ -199,7 +204,7 @@ bool SimilarityAnalizer::readReferenceFile(string refFile)
     @returns a map associatting distance with reference words
 
 */
-map<int, vector<string>> sortedDistances(string src)
+map<int, vector<string>> SimilarityAnalizer::sortedDistances(string src)
 {
     map<int, vector<string>> distances;
     for (vector<string>::iterator str= this->referenceWords.begin();
@@ -219,4 +224,16 @@ map<int, vector<string>> sortedDistances(string src)
         }
     }
     return distances;
+}
+
+/**
+    string SimilarityAnalizer::getRefFileName()
+    @brief used to get the file name, by now is used
+    by class Verifier to add a word to the dictionary
+    when requested
+    @returns string with the name of the reference file
+*/
+string SimilarityAnalizer::getRefFileName()
+{
+    return this->refFileName;
 }

@@ -2,6 +2,7 @@
 #define VERIFIER_H
 
 #include "similarityanalizer.h"
+#include "suggestion.h"
 #include <QMainWindow>
 #include <QGridLayout>
 #include <QPushButton>
@@ -46,12 +47,17 @@ public:
     ~Verifier();
 
 private slots:
+
     void on_text_changed();
     void on_language_cb_modified();
     void on_auto_verify_changed();
     void on_verify_button_clicked();
     void on_load_button_clicked();
     void on_save_button_clicked();
+    void on_suggest_replace(QString srcString, QString suggestion);
+    void on_suggest_replace_all(QString srcString, QString suggestion);
+    void on_suggest_addToDict(QString srcString);
+    void on_suggest_requiredNext();
 
 private:
     QGridLayout *gridLayout;
@@ -66,6 +72,10 @@ private:
     QWidgetItem *verifyPBItem;
     QString currentText;
     bool autoVerify;
+    map<QString, int> currentWrongWords;
+    Suggestion *sug;
+    SimilarityAnalizer *sAnalizer;
+    QStringList words;
 
     void createWidgets();
     void createFileManagWidgets();
@@ -73,10 +83,11 @@ private:
     void createVerifyWidgets();
     void createTextView();
     void initializeGridLayout();
-    QStringList getWords();
+    QStringList getWordsFromText();
     void connectHandlers();
     void generateError(QString message);
     QString buildVerificationAns(QStringList mistakes);
+    QString getNextMistake();
 
 };
 

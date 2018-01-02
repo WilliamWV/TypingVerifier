@@ -11,7 +11,7 @@
 #include <QWidgetItem>
 
 #define SUGGESTION_COL 0
-#define COMMANDS_COL 1
+#define BUTTONS_COL 1
 #define TITLE_ROW 0
 #define REPLACE_ROW 1
 #define SUGGESTION_ROW 1
@@ -20,28 +20,31 @@
 #define IGNORE_ROW 4
 #define SUGGESTION_ROWSPAN 4
 #define SUGGESTION_COL_W 100
-#define COMMANDS_COL_W 50
-#define ROWS_HEIGHT 25
-
-
+#define BUTTONS_COL_W 50
+#define ROWS_H 25
+#define N_OF_ROWS 4
+#define SPACING 5
+#define TITLE_WIDHT 2
+#define BASE_SIMILARITY_THRESHOLD 2
+#define MIN_SUGGESTED_WORD 5
 using namespace std;
 
 class Suggestion : public QWidget
 {
     Q_OBJECT
 public:
-    explicit Suggestion(QWidget *parent = nullptr, QString typed);
-
+    explicit Suggestion(QWidget *parent = nullptr, QString typed, SimilarityAnalizer *refAnalizer);
+    void updateWord(QString newWord);
 
 signals:
 
-    void replaceAll(QString suggested);
-    void replace(QString suggested);
-    void ignore();
-    void addToDict();
+    void replaceAll(QString currentSrcWord,QString suggested);
+    void replace(QString currentSrcWord, QString suggested);
+    void addToDict(QString currentSrcWord);
+    void requestNextMistake();
 
 private slots:
-    void onSuggestedWordChanged();
+    void onSuggestedWordChanged(int row);
     void onReplacePBClicked();
     void onReplaceAllPBClicked();
     void onIgnorePBClicked();
@@ -58,12 +61,15 @@ private:
     QLabel *suggestionTitle;
     QGridLayout *gridLayout;
     QWidgetItem *suggestionItem;
+    QWIdgetItem *titleItem;
     QString currentSuggestion;
-    SimilarityAnalizer *sa;
+    QString currentSrcWord;
+    SimilarityAnalizer *sAnalizer;
 
     void initializeGridLayout();
     void connectHandlers();
-    void createWidgets();
+    void createWidgets(QString typed);
+    void createSuggestion(QString typed);
 };
 
 #endif // SUGGESTION_H

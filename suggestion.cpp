@@ -1,14 +1,17 @@
 #include "suggestion.h"
 
-Suggestion::Suggestion(QWidget *parent, QString typed) :
+Suggestion::Suggestion(QWidget *parent, QString typed, SimilarityAnalizer *refAnalizer) :
     QWidget(parent)
 {
     this->initializeGridLayout();
     this->createWidgets(typed);
+    this->sAnalizer = refAnalizer;
     this->connectHandlers();
     this->setLayout(this->gridLayout);
     this->show();
     this->createSuggestions(typed);
+    this->currentSrcWord = typed;
+
 }
 
 void Suggestion::intializeGridLayout()
@@ -41,7 +44,7 @@ void Suggestion::connectHandlers()
         this, SLOT(onIgnorePBClicked()));
     connect(
         this->suggestionChooser, SIGNAL(currentRowChanged(int)),
-        this, SLOT(onSuggestedWordChanged());
+        this, SLOT(onSuggestedWordChanged(int));
 
 }
 void Suggestion::createWidgets(QString typed)
@@ -80,5 +83,63 @@ void Suggestion::createWidgets(QString typed)
 
 void Suggestion::createSuggestion(QString typed)
 {
-    // in construction
+
+    vector<string> suggestions =
+            this->sAnalizer->closestThan(
+                typed, BASE_SIMILARITY_THRESHOLD);
+    if(suggestions.size()<MIN_SUGGESTED_WORD)
+        suggestions =
+                this->sAnalizer->closestStrings(
+                    typed, MIN_SUGGESTED_WORD);
+
+    for(int i = 0; i<suggestions.size(); i++)
+    {
+        this->suggestionChooser->addItem(
+                    QString::fromStdString(suggestions.at(i)));
+    }
+
 }
+
+void Suggestion::updateWord(QString newWord)
+{
+    this->suggestionTitle = new QLabel(
+                                    QString("Suggestions for: ")
+                                    .append(newWord)
+                                    .append("\n"));
+    this->titleItem = new QWidgetItem(this->suggestionTitle);
+
+    this->gridLayout->addItem(
+                this->titleItem,
+                TITLE_ROW, SUGGESTION_COL,
+                1, TITLE_WIDHT);
+
+    this->createSuggestions(newWord);
+    this->currentSrcWord = newWord;
+}
+
+
+
+void Suggestion::onSuggestedWordChanged(int row)
+{
+    this->currentSuggestion = this->suggestionChooser->item(row)->text();
+}
+void Suggestion::onReplacePBClicked()
+{
+    emit replace(this->currentSrcWord, this->currentSuggestion);
+    emit requestNextMistake();
+}
+void Suggestion::onReplaceAllPBClicked()
+{
+    emit replaceAll(this->currentSrcWord, this->currentSuggestion);
+    emit requestNextMistake();
+}
+void Suggestion::onIgnorePBClicked()
+{
+    emit requestNextMistake();
+}
+void Suggestion::onAddToDictPBClicked()
+{
+    emit addToDict(this->currentSrcWord);
+    emit requestNextMistake();
+}
+
