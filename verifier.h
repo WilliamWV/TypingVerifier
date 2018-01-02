@@ -92,6 +92,7 @@ private:
     vector<int> getWrongWords();
     void updateText(int wordIndex, QString srcString, QString suggestion);
     int findInitialWordCharIndex(int wordIndex);
+    void connectSuggestionHandlers();
 };
 
 

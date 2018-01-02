@@ -107,6 +107,23 @@ void Verifier::connectHandlers()
     connect(
        this->textView, SIGNAL(textChanged()),
        this, SLOT(on_text_changed()));
+
+
+}
+void Verifier::connectSuggestionHandlers()
+{
+    connect(
+       this->sug, SIGNAL(addToDict(QString)),
+       this, SLOT(on_suggest_addToDict(QString)));
+    connect(
+       this->sug, SIGNAL(replace(QString,QString)),
+       this, SLOT(on_suggest_replace(QString,QString)));
+    connect(
+       this->sug, SIGNAL(replaceAll(QString,QString)),
+       this, SLOT(on_suggest_replace_all(QString,QString)));
+    connect(
+       this->sug, SIGNAL(requestNextMistake()),
+       this, SLOT(on_suggest_requiredNext()));
 }
 
 
@@ -137,6 +154,12 @@ void Verifier::on_verify_button_clicked()
     QMessageBox dialog;
     QString results = this->buildVerificationAns(this->wrongWordsIndex);
     dialog.information(this, tr("Results"), results);
+    if(this->wrongWordsIndex.size()>0)
+    {
+        this->sug = new Suggestion(this->words[this->wrongWordsIndex[0]], this->sAnalizer);
+        this->connectSuggestionHandlers();
+    }
+
 }
 void Verifier::on_load_button_clicked()
 {

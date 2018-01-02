@@ -33,8 +33,11 @@ int SimilarityAnalizer::stringDistance(string s1, string s2){
     int s2Size = s2.size();
 
 
-    int dist[s2Size + 1][s1Size + 1];
-
+    int** dist = new int* [s2Size+1];
+    for (int i = 0; i<s2Size+1; ++i)
+    {
+        dist[i] = new int[s1Size+1];
+    }
     for(int i = 0; i< s1Size + 1; i++)
         dist[0][i] = i;
     for(int j = 1; j< s2Size + 1; j++)
@@ -180,6 +183,7 @@ bool SimilarityAnalizer::readReferenceFile(string refFile)
 {
     try{
         ifstream inputDict;
+
         inputDict.open(refFile);
         string word;
         while(inputDict>>word)

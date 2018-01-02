@@ -7,6 +7,7 @@
 #include <iostream>
 #include <map>
 #include <stdexcept>
+#include <algorithm>
 
 using namespace std;
 class SimilarityAnalizer
