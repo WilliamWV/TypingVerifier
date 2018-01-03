@@ -258,17 +258,16 @@ void Verifier::on_suggest_replace(QString srcString, QString suggestion)
 }
 void Verifier::on_suggest_replace_all(QString srcString, QString suggestion)
 {
-    vector<int> wordsIndex;
-    int size = srcString.size();
     for(unsigned int i = 0; i<this->wrongWordsIndex.size(); i++)
     {
-        QString onText = this->currentText.mid(this->wrongWordsIndex[i], size);
+        QString onText = this->words[this->wrongWordsIndex[i]];
         if(onText == srcString)
         {
             this->words.replace(this->wrongWordsIndex[i], suggestion);
             this->updateText(this->wrongWordsIndex[i], srcString, suggestion);
         }
     }
+    this->update();
 }
 void Verifier::on_suggest_addToDict(QString srcString)
 {

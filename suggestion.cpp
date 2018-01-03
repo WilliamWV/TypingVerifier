@@ -98,6 +98,13 @@ void Suggestion::createSuggestion(QString typed)
     if(this->suggestionChooser->count()>0)
     {
         this->suggestionChooser->setCurrentRow(0);
+        this->currentSuggestion = this->suggestionChooser->item(0)->text();
+    }
+    else
+    {
+        this->suggestionChooser->setEnabled(false);
+        this->replacePB->setEnabled(false);
+        this->replaceAllPB->setEnabled(false);
     }
 
 }
