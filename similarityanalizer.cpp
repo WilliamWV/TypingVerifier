@@ -234,3 +234,24 @@ string SimilarityAnalizer::getRefFileName()
 {
     return this->refFileName;
 }
+
+
+/**
+    void SimilarityAnalizer::setReferences(vector<string> newRef)
+    @brief set the reference words, by now is used when there was
+    an insertion of some word, verify if the parameter is not empty
+    @param new reference words
+*/
+void SimilarityAnalizer::setReferences(vector<string> newRef)
+{
+    if(newRef.empty() == false)
+        this->referenceWords = newRef;
+}
+
+/**
+    returns the current reference words
+*/
+vector<string> SimilarityAnalizer::getReferences()
+{
+    return this->referenceWords;
+}

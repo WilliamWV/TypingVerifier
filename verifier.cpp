@@ -271,11 +271,38 @@ void Verifier::on_suggest_replace_all(QString srcString, QString suggestion)
 }
 void Verifier::on_suggest_addToDict(QString srcString)
 {
-    string fileName = this->sAnalizer->getRefFileName();
-    ofstream file;
-    file.open(fileName);
-    file<<"\n"<<srcString.toStdString();
+    vector<string> currentReferences = this->sAnalizer->getReferences();
+    string adding = srcString.toStdString();
+    cout<<0;
+    for(unsigned int i = 0; i<currentReferences.size(); i++)
+    {
+        if(currentReferences[i].compare(adding)>0)
+        {
+            currentReferences.insert(
+                        currentReferences.begin() + i, adding);
+            break;
+        }
+    }
+
+    this->modifyReferenceFile(currentReferences);
+    this->sAnalizer->setReferences(currentReferences);
+
 }
+
+void Verifier::modifyReferenceFile(vector<string> refWords)
+{
+    string fileName = this->sAnalizer->getRefFileName();
+
+    ofstream fileHandler;
+    fileHandler.open(fileName);
+
+    for(unsigned int i = 0; i<refWords.size(); i++)
+    {
+        fileHandler<<refWords[i]<<endl;
+    }
+
+}
+
 void Verifier::on_suggest_requiredNext()
 {
     QString next = this->getNextMistake();

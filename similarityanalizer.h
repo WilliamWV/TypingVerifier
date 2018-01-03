@@ -21,6 +21,9 @@ public:
     void changeReferenceFile(string referenceFile);
     bool containsReferenceTo(string src);
     string getRefFileName();
+    void setReferences(vector<string> newRef);
+    vector<string> getReferences();
+
 private:
     vector<string> referenceWords;
     bool readReferenceFile(string refFile);

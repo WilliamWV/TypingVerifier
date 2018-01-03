@@ -93,6 +93,8 @@ private:
     void updateText(int wordIndex, QString srcString, QString suggestion);
     int findInitialWordCharIndex(int wordIndex);
     void connectSuggestionHandlers();
+    void modifyReferenceFile(vector<string> refWords);
+
 };
 
 
