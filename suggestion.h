@@ -27,6 +27,9 @@
 #define TITLE_WIDHT 2
 #define BASE_SIMILARITY_THRESHOLD 2
 #define MIN_SUGGESTED_WORD 5
+#define MAX_SIMILARITY_THRESHOLD 4
+#define SUGGESTION_WINDOW_HEIGHT 180
+#define SUGGESTION_WINDOW_WIDTH 375
 using namespace std;
 
 class Suggestion : public QWidget

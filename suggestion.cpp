@@ -25,8 +25,7 @@ void Suggestion::initializeGridLayout()
         this->gridLayout->setRowMinimumHeight(i, ROWS_H);
     }
     this->gridLayout->setSpacing(SPACING);
-    this->setFixedSize(this->width(), this->height());
-
+    this->setFixedSize(SUGGESTION_WINDOW_WIDTH, SUGGESTION_WINDOW_HEIGHT);
 }
 void Suggestion::connectHandlers()
 {
@@ -78,7 +77,6 @@ void Suggestion::createWidgets(QString typed)
     this->gridLayout->addWidget(
                 this->ignorePB, IGNORE_ROW, BUTTONS_COL);
 
-
 }
 
 void Suggestion::createSuggestion(QString typed)
@@ -89,13 +87,17 @@ void Suggestion::createSuggestion(QString typed)
                 typed.toStdString(), BASE_SIMILARITY_THRESHOLD);
     if(suggestions.size()<MIN_SUGGESTED_WORD)
         suggestions =
-                this->sAnalizer->closestStrings(
-                    typed.toStdString(), MIN_SUGGESTED_WORD);
-
+                this->sAnalizer->closestThan(
+                    typed.toStdString(), MAX_SIMILARITY_THRESHOLD);
+    this->suggestionChooser->clear();
     for(unsigned int i = 0; i<suggestions.size(); i++)
     {
         this->suggestionChooser->addItem(
                     QString::fromStdString(suggestions.at(i)));
+    }
+    if(this->suggestionChooser->count()>0)
+    {
+        this->suggestionChooser->setCurrentRow(0);
     }
 
 }
@@ -121,7 +123,8 @@ void Suggestion::updateWord(QString newWord)
 
 void Suggestion::onSuggestedWordChanged(int row)
 {
-    this->currentSuggestion = this->suggestionChooser->item(row)->text();
+    if(row>0 && row<this->suggestionChooser->count())
+        this->currentSuggestion = this->suggestionChooser->item(row)->text();
 }
 void Suggestion::onReplacePBClicked()
 {

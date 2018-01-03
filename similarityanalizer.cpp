@@ -33,11 +33,7 @@ int SimilarityAnalizer::stringDistance(string s1, string s2){
     int s2Size = s2.size();
 
 
-    int** dist = new int* [s2Size+1];
-    for (int i = 0; i<s2Size+1; ++i)
-    {
-        dist[i] = new int[s1Size+1];
-    }
+    int dist[s2Size+1][s1Size + 1];
     for(int i = 0; i< s1Size + 1; i++)
         dist[0][i] = i;
     for(int j = 1; j< s2Size + 1; j++)
@@ -48,10 +44,7 @@ int SimilarityAnalizer::stringDistance(string s1, string s2){
         for(int i = 1; i<s1Size + 1; i++)
         {
             int currentChars = s1[i-1] == s2[j-1]? 0:1;
-            min(
-                dist[j][i-1] + 1,
-                min(dist[j-1][i] + 1,
-                    dist[j-1][i-1] + currentChars));
+            dist[j][i] = min( dist[j][i-1] + 1,min(dist[j-1][i] + 1, dist[j-1][i-1] + currentChars));
         }
     }
 
