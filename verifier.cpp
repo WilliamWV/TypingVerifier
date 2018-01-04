@@ -127,6 +127,9 @@ void Verifier::connectSuggestionHandlers()
     connect(
        this->sug, SIGNAL(closing()),
        this, SLOT(on_suggest_close()));
+    connect(
+       this->sug, SIGNAL(contextTextChanged(QString)),
+       this, SLOT(on_suggest_contextChanged(QString)));
 
 }
 
@@ -402,6 +405,25 @@ void Verifier::on_suggest_close()
     dialog.exec();
 
 }
+
+void Verifier::on_suggest_contextChanged(QString newContext)
+{
+    int wordIndex = this->wrongWordsIndex[0];
+
+    int firstWordIndex = this->getInitialWordOnContext(wordIndex);
+    int lastWordIndex = this->getFinalWordOnContext(wordIndex);
+    int initContextIndex = this->findInitialWordCharIndex(firstWordIndex);
+    int finalContextIndex = this->findInitialWordCharIndex(lastWordIndex)
+                            + this->words[lastWordIndex].size();
+
+    QString previousContext = this->currentText.mid(initContextIndex,
+                                                    finalContextIndex - initContextIndex);
+    this->currentText.replace(previousContext, newContext);
+    this->textView->setText(this->currentText);
+    this->update();
+    this->words = this->getWordsFromText();
+    this->wrongWordsIndex = this->getWrongWords();
+}
 QString Verifier::getNextMistake()
 {
     this->wrongWordsIndex.erase(this->wrongWordsIndex.begin());
@@ -417,26 +439,37 @@ QString Verifier::getNextMistake()
 QString Verifier::getWordContext(int wordIndex)
 {
     QString context = EMPTY_STRING;
-    int prevWords = N_OF_WORDS_ON_CONTEXT/2;
-    int postWords = N_OF_WORDS_ON_CONTEXT/2;
-    if(prevWords>wordIndex)
-        prevWords = wordIndex;
-    if(postWords + wordIndex>= this->words.size())
+    int initWord = this->getInitialWordOnContext(wordIndex);
+    int finalWord = this->getFinalWordOnContext(wordIndex);
+    for(int i = initWord; i<wordIndex; i++)
     {
-        postWords = this->words.size() - wordIndex - 1;
+        context.append(this->words[i]).append(" ");
     }
-    for(int i = prevWords; i>0; i--)
-    {
-        context.append(this->words[wordIndex - i]).append(" ");
-    }
+
     context.append(this->words[wordIndex]).append(" ");
-    for(int i = 0; i<postWords; i++)
+    for(int i = wordIndex + 1; i<= finalWord; i++)
     {
-        context.append(this->words[wordIndex + i + 1]).append(" ");
+        context.append(this->words[i]).append(" ");
     }
 
     return context;
 
+}
+
+int Verifier::getInitialWordOnContext(int mainWord)
+{
+    int initWord = mainWord - N_OF_WORDS_ON_CONTEXT/2;
+    if(initWord< 0)
+        initWord = 0;
+    return initWord;
+}
+int Verifier::getFinalWordOnContext(int mainWord)
+{
+    int finalWord = mainWord + N_OF_WORDS_ON_CONTEXT/2;
+    if(finalWord>=this->words.size())
+        finalWord = this->words.size() - 1;
+
+    return finalWord;
 }
 
 

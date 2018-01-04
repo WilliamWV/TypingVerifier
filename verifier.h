@@ -62,6 +62,7 @@ private slots:
     void on_suggest_addToDict(QString srcString);
     void on_suggest_requiredNext();
     void on_suggest_close();
+    void on_suggest_contextChanged(QString newContext);
 private:
     QGridLayout *gridLayout;
     QPushButton *loadPB;
@@ -97,7 +98,8 @@ private:
     void connectSuggestionHandlers();
     void modifyReferenceFile(vector<string> refWords);
     QString getWordContext(int wordIndex);
-
+    int getInitialWordOnContext(int mainWord);
+    int getFinalWordOnContext(int mainWord);
 
 };
 
