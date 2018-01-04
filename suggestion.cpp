@@ -114,6 +114,7 @@ void Suggestion::createSuggestion(QString typed)
 
 void Suggestion::updateWord(QString newWord)
 {
+
     if(newWord.isEmpty() == false)
     {
         this->suggestionTitle->setText(QString("Suggestions for: ").append(newWord).append("\n"));

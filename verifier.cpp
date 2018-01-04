@@ -262,7 +262,7 @@ QString Verifier::buildVerificationAns(vector<int> mistakes)
     else
     {
         QString results("There was ");
-        results.append(QString::number(n)).append(" mistkes\n Click YES to open Suggestions or NO to ignore");
+        results.append(QString::number(n)).append(" mistakes\n Click YES to open Suggestions or NO to ignore");
 
         return results;
 
@@ -395,10 +395,11 @@ void Verifier::on_suggest_close()
 }
 QString Verifier::getNextMistake()
 {
+    this->wrongWordsIndex.erase(this->wrongWordsIndex.begin());
+
     if(this->wrongWordsIndex.empty())
         return EMPTY_STRING;
 
-    this->wrongWordsIndex.erase(this->wrongWordsIndex.begin());
     QString next = this->words[this->wrongWordsIndex[0]];
 
     return next;
