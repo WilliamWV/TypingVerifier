@@ -45,6 +45,7 @@ signals:
     void replace(QString currentSrcWord, QString suggested);
     void addToDict(QString currentSrcWord);
     void requestNextMistake();
+    void closing();
 
 private slots:
     void onSuggestedWordChanged(int row);

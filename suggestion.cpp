@@ -114,10 +114,19 @@ void Suggestion::createSuggestion(QString typed)
 
 void Suggestion::updateWord(QString newWord)
 {
-    this->suggestionTitle->setText(QString("Suggestions for: ").append(newWord).append("\n"));
-    this->createSuggestion(newWord);
-    this->currentSrcWord = newWord;
-    this->update();
+    if(newWord.isEmpty() == false)
+    {
+        this->suggestionTitle->setText(QString("Suggestions for: ").append(newWord).append("\n"));
+        this->createSuggestion(newWord);
+        this->currentSrcWord = newWord;
+        this->update();
+
+    }
+    else
+    {
+        emit closing();
+        this->close();
+    }
 }
 
 void Suggestion::onSuggestedWordChanged(int row)

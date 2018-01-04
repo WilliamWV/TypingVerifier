@@ -59,7 +59,7 @@ private slots:
     void on_suggest_replace_all(QString srcString, QString suggestion);
     void on_suggest_addToDict(QString srcString);
     void on_suggest_requiredNext();
-
+    void on_suggest_close();
 private:
     QGridLayout *gridLayout;
     QPushButton *loadPB;

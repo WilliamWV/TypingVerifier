@@ -124,6 +124,10 @@ void Verifier::connectSuggestionHandlers()
     connect(
        this->sug, SIGNAL(requestNextMistake()),
        this, SLOT(on_suggest_requiredNext()));
+    connect(
+       this->sug, SIGNAL(closing()),
+       this, SLOT(on_suggest_close()));
+
 }
 
 
@@ -151,13 +155,34 @@ void Verifier::on_verify_button_clicked()
     this->words = this->getWordsFromText();
     this->wrongWordsIndex = this->getWrongWords();
 
-    QMessageBox dialog;
     QString results = this->buildVerificationAns(this->wrongWordsIndex);
-    dialog.information(this, tr("Results"), results);
+    QString title = QString("Results");
+
     if(this->wrongWordsIndex.size()>0)
     {
-        this->sug = new Suggestion(this->words[this->wrongWordsIndex[0]], this->sAnalizer);
-        this->connectSuggestionHandlers();
+        QMessageBox dialog(title, results,
+                           QMessageBox::Question,
+                           QMessageBox::Yes | QMessageBox::Default,
+                           QMessageBox::No | QMessageBox::Escape,
+                           QMessageBox::NoButton);
+
+        if(dialog.exec() == QMessageBox::Yes)
+        {
+            this->sug = new Suggestion(this->words[this->wrongWordsIndex[0]], this->sAnalizer);
+            this->connectSuggestionHandlers();
+        }
+
+    }
+    else
+    {
+        QMessageBox dialog(title, results,
+                           QMessageBox::Information,
+                           QMessageBox::Ok | QMessageBox::Default,
+                           QMessageBox::NoButton,
+                           QMessageBox::NoButton
+                           );
+        dialog.exec();
+
     }
 
 }
@@ -236,14 +261,9 @@ QString Verifier::buildVerificationAns(vector<int> mistakes)
         return QString("Nothing to correct");
     else
     {
-        QString results("The following words are incorrect: \n");
-        for(int i = 0; i<n; i++)
-        {
-            results
-                    .append(QString(" * "))
-                    .append(this->words[mistakes.at(i)])
-                    .append(QChar('\n'));
-        }
+        QString results("There was ");
+        results.append(QString::number(n)).append(" mistkes\n Click YES to open Suggestions or NO to ignore");
+
         return results;
 
     }
@@ -362,6 +382,17 @@ int Verifier::findInitialWordCharIndex(int wordIndex)
     return initWordCharIndex;
 }
 
+void Verifier::on_suggest_close()
+{
+    QMessageBox dialog (tr("Finished"),
+                        tr("Correction complete.\n"),
+                        QMessageBox::Information,
+                        QMessageBox::Ok,
+                        QMessageBox::NoButton,
+                        QMessageBox::NoButton);
+    dialog.exec();
+
+}
 QString Verifier::getNextMistake()
 {
     if(this->wrongWordsIndex.empty())
