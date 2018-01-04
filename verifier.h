@@ -37,6 +37,8 @@
 #define TEXT_COL 0
 #define EMPTY_STRING QString("")
 
+#define N_OF_WORDS_ON_CONTEXT 10 //5 each side
+
 using namespace std;
 
 class Verifier : public QWidget
@@ -94,6 +96,8 @@ private:
     int findInitialWordCharIndex(int wordIndex);
     void connectSuggestionHandlers();
     void modifyReferenceFile(vector<string> refWords);
+    QString getWordContext(int wordIndex);
+
 
 };
 

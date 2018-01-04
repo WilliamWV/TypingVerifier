@@ -168,7 +168,10 @@ void Verifier::on_verify_button_clicked()
 
         if(dialog.exec() == QMessageBox::Yes)
         {
-            this->sug = new Suggestion(this->words[this->wrongWordsIndex[0]], this->sAnalizer);
+            this->sug = new Suggestion(
+                        this->words[this->wrongWordsIndex[0]],
+                        this->getWordContext(this->wrongWordsIndex[0]),
+                        this->sAnalizer);
             this->connectSuggestionHandlers();
         }
 
@@ -326,7 +329,13 @@ void Verifier::modifyReferenceFile(vector<string> refWords)
 void Verifier::on_suggest_requiredNext()
 {
     QString next = this->getNextMistake();
-    this->sug->updateWord(next);
+    QString context;
+
+    if(next.isEmpty())
+        context = EMPTY_STRING;
+    else
+        context = this->getWordContext(this->wrongWordsIndex[0]);
+    this->sug->updateWord(next, context);
 }
 
 void Verifier::updateText(int wordIndex, QString srcString, QString suggestion)
@@ -404,6 +413,32 @@ QString Verifier::getNextMistake()
 
     return next;
 }
+
+QString Verifier::getWordContext(int wordIndex)
+{
+    QString context = EMPTY_STRING;
+    int prevWords = N_OF_WORDS_ON_CONTEXT/2;
+    int postWords = N_OF_WORDS_ON_CONTEXT/2;
+    if(prevWords>wordIndex)
+        prevWords = wordIndex;
+    if(postWords + wordIndex>= this->words.size())
+    {
+        postWords = this->words.size() - wordIndex - 1;
+    }
+    for(int i = prevWords; i>0; i--)
+    {
+        context.append(this->words[wordIndex - i]).append(" ");
+    }
+    context.append(this->words[wordIndex]).append(" ");
+    for(int i = 0; i<postWords; i++)
+    {
+        context.append(this->words[wordIndex + i + 1]).append(" ");
+    }
+
+    return context;
+
+}
+
 
 Verifier::~Verifier()
 {

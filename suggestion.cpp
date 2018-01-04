@@ -1,10 +1,10 @@
 #include "suggestion.h"
 
-Suggestion::Suggestion(QString typed, SimilarityAnalizer *refAnalizer, QWidget *parent) :
+Suggestion::Suggestion(QString typed, QString context, SimilarityAnalizer *refAnalizer, QWidget *parent) :
     QWidget(parent)
 {
     this->initializeGridLayout();
-    this->createWidgets(typed);
+    this->createWidgets(typed, context);
     this->sAnalizer = refAnalizer;
     this->connectHandlers();
     this->setLayout(this->gridLayout);
@@ -24,6 +24,7 @@ void Suggestion::initializeGridLayout()
     {
         this->gridLayout->setRowMinimumHeight(i, ROWS_H);
     }
+    this->gridLayout->setRowMinimumHeight(CONTEXT_ROW, CONTEXT_ROW_HEIGHT);
     this->gridLayout->setSpacing(SPACING);
     this->setFixedSize(SUGGESTION_WINDOW_WIDTH, SUGGESTION_WINDOW_HEIGHT);
 }
@@ -44,21 +45,33 @@ void Suggestion::connectHandlers()
     connect(
         this->suggestionChooser, SIGNAL(currentRowChanged(int)),
         this, SLOT(onSuggestedWordChanged(int)));
+    connect(
+        this->applyPB, SIGNAL(clicked(bool)),
+        this, SLOT(onApplyPBClicked()));
+    connect(
+        this->editableContext, SIGNAL(textChanged()),
+        this, SLOT(onContextTextChanged()));
 
 }
-void Suggestion::createWidgets(QString typed)
+void Suggestion::createWidgets(QString typed, QString context)
 {
     this->replacePB = new QPushButton("Replace");
     this->replaceAllPB = new QPushButton("Replace all");
     this->addToDictPB = new QPushButton("Add to Dictionary");
     this->ignorePB = new QPushButton("Ignore");
+    this->applyPB = new QPushButton("Apply changes");
+
     this->suggestionChooser = new QListWidget();
     this->suggestionTitle = new QLabel(
                                     QString("Suggestions for: ")
                                     .append(typed)
                                     .append("\n"));
+    this->editableContext = new QTextEdit(context);
+
     this->suggestionItem = new QWidgetItem(this->suggestionChooser);
     this->titleItem = new QWidgetItem(this->suggestionTitle);
+    this->contextItem = new QWidgetItem(this->editableContext);
+
 
     this->gridLayout->addItem(
                 this->titleItem,
@@ -68,6 +81,11 @@ void Suggestion::createWidgets(QString typed)
                 this->suggestionItem,
                 SUGGESTION_ROW, SUGGESTION_COL,
                 SUGGESTION_ROWSPAN);
+    this->gridLayout->addItem(
+                this->contextItem,
+                CONTEXT_ROW, SUGGESTION_COL,
+                1, CONTEXT_WIDHT);
+
     this->gridLayout->addWidget(
                 this->replacePB, REPLACE_ROW, BUTTONS_COL);
     this->gridLayout->addWidget(
@@ -76,6 +94,9 @@ void Suggestion::createWidgets(QString typed)
                 this->addToDictPB, ADD_TO_DICT_ROW, BUTTONS_COL);
     this->gridLayout->addWidget(
                 this->ignorePB, IGNORE_ROW, BUTTONS_COL);
+    this->gridLayout->addWidget(
+                this->applyPB, APPLY_ROW, BUTTONS_COL);
+    this->applyPB->setEnabled(false);
 
 }
 
@@ -112,7 +133,7 @@ void Suggestion::createSuggestion(QString typed)
 
 }
 
-void Suggestion::updateWord(QString newWord)
+void Suggestion::updateWord(QString newWord, QString context)
 {
 
     if(newWord.isEmpty() == false)
@@ -120,6 +141,8 @@ void Suggestion::updateWord(QString newWord)
         this->suggestionTitle->setText(QString("Suggestions for: ").append(newWord).append("\n"));
         this->createSuggestion(newWord);
         this->currentSrcWord = newWord;
+        this->editableContext->setText(context);
+        this->applyPB->setEnabled(false);
         this->update();
 
     }
@@ -155,3 +178,13 @@ void Suggestion::onAddToDictPBClicked()
     emit requestNextMistake();
 }
 
+void Suggestion::onApplyPBClicked()
+{
+    emit contextTextChanged(this->editableContext->toPlainText());
+    emit requestNextMistake();
+}
+
+void Suggestion::onContextTextChanged()
+{
+    this->applyPB->setEnabled(true);
+}
