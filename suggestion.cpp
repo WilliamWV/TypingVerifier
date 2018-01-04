@@ -111,19 +111,10 @@ void Suggestion::createSuggestion(QString typed)
 
 void Suggestion::updateWord(QString newWord)
 {
-    this->suggestionTitle = new QLabel(
-                                    QString("Suggestions for: ")
-                                    .append(newWord)
-                                    .append("\n"));
-    this->titleItem = new QWidgetItem(this->suggestionTitle);
-
-    this->gridLayout->addItem(
-                this->titleItem,
-                TITLE_ROW, SUGGESTION_COL,
-                1, TITLE_WIDHT);
-
+    this->suggestionTitle->setText(QString("Suggestions for: ").append(newWord).append("\n"));
     this->createSuggestion(newWord);
     this->currentSrcWord = newWord;
+    this->update();
 }
 
 
