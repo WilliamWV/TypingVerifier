@@ -99,6 +99,9 @@ void Suggestion::createSuggestion(QString typed)
     {
         this->suggestionChooser->setCurrentRow(0);
         this->currentSuggestion = this->suggestionChooser->item(0)->text();
+        this->suggestionChooser->setEnabled(true);
+        this->replacePB->setEnabled(true);
+        this->replaceAllPB->setEnabled(true);
     }
     else
     {
@@ -116,8 +119,6 @@ void Suggestion::updateWord(QString newWord)
     this->currentSrcWord = newWord;
     this->update();
 }
-
-
 
 void Suggestion::onSuggestedWordChanged(int row)
 {
