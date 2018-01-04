@@ -410,14 +410,7 @@ void Verifier::on_suggest_contextChanged(QString newContext)
 {
     int wordIndex = this->wrongWordsIndex[0];
 
-    int firstWordIndex = this->getInitialWordOnContext(wordIndex);
-    int lastWordIndex = this->getFinalWordOnContext(wordIndex);
-    int initContextIndex = this->findInitialWordCharIndex(firstWordIndex);
-    int finalContextIndex = this->findInitialWordCharIndex(lastWordIndex)
-                            + this->words[lastWordIndex].size();
-
-    QString previousContext = this->currentText.mid(initContextIndex,
-                                                    finalContextIndex - initContextIndex);
+    QString previousContext = this->getWordContext(wordIndex);
     this->currentText.replace(previousContext, newContext);
     this->textView->setText(this->currentText);
     this->update();
@@ -438,19 +431,15 @@ QString Verifier::getNextMistake()
 
 QString Verifier::getWordContext(int wordIndex)
 {
-    QString context = EMPTY_STRING;
-    int initWord = this->getInitialWordOnContext(wordIndex);
-    int finalWord = this->getFinalWordOnContext(wordIndex);
-    for(int i = initWord; i<wordIndex; i++)
-    {
-        context.append(this->words[i]).append(" ");
-    }
 
-    context.append(this->words[wordIndex]).append(" ");
-    for(int i = wordIndex + 1; i<= finalWord; i++)
-    {
-        context.append(this->words[i]).append(" ");
-    }
+    int firstWordIndex = this->getInitialWordOnContext(wordIndex);
+    int lastWordIndex = this->getFinalWordOnContext(wordIndex);
+    int initContextIndex = this->findInitialWordCharIndex(firstWordIndex);
+    int finalContextIndex = this->findInitialWordCharIndex(lastWordIndex)
+                            + this->words[lastWordIndex].size();
+
+    QString context = this->currentText.mid(initContextIndex,
+                                                    finalContextIndex - initContextIndex);
 
     return context;
 
