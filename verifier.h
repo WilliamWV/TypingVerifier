@@ -36,7 +36,10 @@
 #define COMMANDS_COL 1
 #define TEXT_COL 0
 #define EMPTY_STRING QString("")
+#define HIGHLIGHT_TAG "<font color=\"red\">"
+#define HIGHLIGHT_CLOSE_TAG "</font>"
 
+#define HIGHLIGHT_TAG_SIZE 18
 #define N_OF_WORDS_ON_CONTEXT 10 //5 each side
 
 using namespace std;
@@ -100,6 +103,7 @@ private:
     QString getWordContext(int wordIndex);
     int getInitialWordOnContext(int mainWord);
     int getFinalWordOnContext(int mainWord);
+    QString highlightWord(QString context, int wordIndex);
 
 };
 

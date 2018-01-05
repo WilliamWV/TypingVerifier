@@ -66,7 +66,8 @@ void Suggestion::createWidgets(QString typed, QString context)
                                     QString("Suggestions for: ")
                                     .append(typed)
                                     .append("\n"));
-    this->editableContext = new QTextEdit(context);
+    this->editableContext = new QTextEdit();
+    this->editableContext->setHtml(context);
 
     this->suggestionItem = new QWidgetItem(this->suggestionChooser);
     this->titleItem = new QWidgetItem(this->suggestionTitle);
@@ -141,7 +142,7 @@ void Suggestion::updateWord(QString newWord, QString context)
         this->suggestionTitle->setText(QString("Suggestions for: ").append(newWord).append("\n"));
         this->createSuggestion(newWord);
         this->currentSrcWord = newWord;
-        this->editableContext->setText(context);
+        this->editableContext->setHtml(context);
         this->applyPB->setEnabled(false);
         this->update();
 

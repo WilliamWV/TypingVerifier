@@ -440,9 +440,22 @@ QString Verifier::getWordContext(int wordIndex)
 
     QString context = this->currentText.mid(initContextIndex,
                                                     finalContextIndex - initContextIndex);
-
+    context = this->highlightWord(context, wordIndex);
     return context;
 
+}
+
+QString Verifier::highlightWord(QString context, int wordIndex)
+{
+    int firstContextWord = this->getInitialWordOnContext(wordIndex);
+    int initContextIndex = this->findInitialWordCharIndex(firstContextWord);
+    int wordInitIndex = this->findInitialWordCharIndex(wordIndex);
+    int wordOnContext = wordInitIndex - initContextIndex;
+    context.insert(wordOnContext, HIGHLIGHT_TAG);
+    context.insert(wordOnContext + this->words[wordIndex].size() + HIGHLIGHT_TAG_SIZE,
+                   HIGHLIGHT_CLOSE_TAG);
+
+    return context;
 }
 
 int Verifier::getInitialWordOnContext(int mainWord)
