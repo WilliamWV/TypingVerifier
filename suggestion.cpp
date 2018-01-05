@@ -1,5 +1,19 @@
 #include "suggestion.h"
 
+/**
+    Class constructor
+    Suggestion::Suggestion(QString typed, QString context, SimilarityAnalizer *refAnalizer, QWidget *parent)
+    @brief initialize the suggestion window with the first word and its context,
+    this will initialize the basic structure of the object and will be ready to
+    retrieve suggestions and change current word
+    @param typed : string found in the text that should be wrong
+    @param context: string with the word highlighted and its sorrounding
+    @param refAnalizer: instance of class SimilarityAnalizer previously created
+    with some reference dictionary
+    @param parent: widget that is the owner, of this class
+
+
+*/
 Suggestion::Suggestion(QString typed, QString context, SimilarityAnalizer *refAnalizer, QWidget *parent) :
     QWidget(parent)
 {
@@ -14,6 +28,13 @@ Suggestion::Suggestion(QString typed, QString context, SimilarityAnalizer *refAn
 
 }
 
+/**
+    void Suggestion::initializeGridLayout()
+    @brief initialize properties of the window layout as cells size and
+    spacing, this also sets the general size of the window as fixed to
+    a good visualization of the results
+
+*/
 void Suggestion::initializeGridLayout()
 {
     this->gridLayout = new QGridLayout();
@@ -28,6 +49,11 @@ void Suggestion::initializeGridLayout()
     this->gridLayout->setSpacing(SPACING);
     this->setFixedSize(SUGGESTION_WINDOW_WIDTH, SUGGESTION_WINDOW_HEIGHT);
 }
+/**
+    void Suggestion::connectHandlers()
+    @brief connect usefull signals from widgets of this class
+    with the corresponding handler function
+*/
 void Suggestion::connectHandlers()
 {
     connect(
@@ -53,6 +79,15 @@ void Suggestion::connectHandlers()
         this, SLOT(onContextTextChanged()));
 
 }
+/**
+    void Suggestion::createWidgets(QString typed, QString context)
+    @brief create the widgets of this class and also allocate them
+    to the reserved position on the grid layout
+
+    @param typed: initial string passed from constructor
+    @param context: sorrounding of the string as passed to the constructor
+
+*/
 void Suggestion::createWidgets(QString typed, QString context)
 {
     this->replacePB = new QPushButton("Replace");
@@ -101,6 +136,19 @@ void Suggestion::createWidgets(QString typed, QString context)
 
 }
 
+/**
+    void Suggestion::createSuggestion(QString typed)
+    @brief using the reference instance of SimilarityAnalizer
+    class create some suggestions for the typed word based on
+    the similarity of them.
+        If it found some suggestions it places it on the word
+    chooser widget, otherwise it disable the buttons of replace
+    and replace all once there is no suggestion, so the user can
+    handly modificate the text, ignore the mistake or add the
+    string to the reference dictionary.
+
+    @param typed: string to which suggestions should be created
+*/
 void Suggestion::createSuggestion(QString typed)
 {
 
@@ -134,6 +182,16 @@ void Suggestion::createSuggestion(QString typed)
 
 }
 
+/**
+    void Suggestion::updateWord(QString newWord, QString context)
+    @brief changes the current analized word, if the passed word
+    is empty it closes the suggestion window assuming that the
+    verification is complete
+
+    @param newWord: new word to be analized
+    @param context: sorrounding of the new word
+
+*/
 void Suggestion::updateWord(QString newWord, QString context)
 {
 
@@ -154,37 +212,88 @@ void Suggestion::updateWord(QString newWord, QString context)
     }
 }
 
+/**
+   void Suggestion::onSuggestedWordChanged(int row)
+   @brief handler called when the user changes the highlighted
+   word of the word chooser, this function changes the current
+   suggestion accordingly with the user choose if it was valid
+
+*/
 void Suggestion::onSuggestedWordChanged(int row)
 {
     if(row>0 && row<this->suggestionChooser->count())
         this->currentSuggestion = this->suggestionChooser->item(row)->text();
 }
+/**
+    void Suggestion::onReplacePBClicked()
+    @brief handler to clicks on button Replace, this
+    emit signals that should be handled by the class
+    that constrols the main text and ask it to change
+    the references of the word that should be replaced
+    and request that it sends back the new word to
+    continue the verification
+
+*/
 void Suggestion::onReplacePBClicked()
 {
     emit replace(this->currentSrcWord, this->currentSuggestion);
     emit requestNextMistake();
 }
+
+/**
+    void Suggestion::onReplaceAllPBClicked()
+    @brief handler to replace all button, interacts with the class
+    that controls the main text reporting what should be changed and
+    request the new word to continue verification
+
+*/
 void Suggestion::onReplaceAllPBClicked()
 {
     emit replaceAll(this->currentSrcWord, this->currentSuggestion);
     emit requestNextMistake();
 }
+/**
+    void Suggestion::onIgnorePBClicked()
+    @brief handles the ignore button, this only request the next word
+    from the class that control the main text.
+*/
 void Suggestion::onIgnorePBClicked()
 {
     emit requestNextMistake();
 }
+/**
+    void Suggestion::onAddToDictPBClicked()
+    @brief handles the add to dict button and ask the class that can
+    modifies the references to insert the new string, this also request
+    the next word to continue the verifications.
+*/
 void Suggestion::onAddToDictPBClicked()
 {
     emit addToDict(this->currentSrcWord);
     emit requestNextMistake();
 }
 
+/**
+   void Suggestion::onApplyPBClicked()
+   @brief handles the apply changes button, used when the user modifies
+   the text through the suggestion window, this reports the changes to
+   the class that controlls the main text, also request the next word
+   to continue the verification
+
+*/
 void Suggestion::onApplyPBClicked()
 {
     emit contextTextChanged(this->editableContext->toPlainText());
     emit requestNextMistake();
 }
 
+/**
+  void Suggestion::onContextTextChanged()
+  @brief handle changes by user on the suggestion editable text
+  showing the word and its sorroundings. This enables the apply
+  button, so that the user can request to replace what was in the
+  text with the new edited content
+*/
 void Suggestion::onContextTextChanged()
 {
     this->applyPB->setEnabled(true);
