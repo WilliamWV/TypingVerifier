@@ -136,7 +136,7 @@ void Verifier::connectSuggestionHandlers()
 
 void Verifier::on_text_changed()
 {
-    this->currentText = this->textView->toPlainText();
+    this->currentText = this->textView->toPlainText().toLower();
     QStringList newWords = this->getWordsFromText();
 
     if(this->autoVerify)
