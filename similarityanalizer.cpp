@@ -52,50 +52,6 @@ int SimilarityAnalizer::stringDistance(string s1, string s2){
 
 }
 
-/**
-    vector<string> SimilarityAnalizer::closestStrings(string src, unsigned int minReturnedStr)
-    @brief based on the reference dictionary returns the closest words based
-    on the distance calculated by the function stringDistance of this class
-    @param src: string to compare with reference
-    @param minReturnedStr: minimum number of returned strings, that is the nth closest
-    strings, the number of returned strings may be greater because if there is more words
-    with the same distace all are returned
-    @returns vector of the closest strings sorted from more closest to less closest
-*/
-vector<string> SimilarityAnalizer::closestStrings(string src, unsigned int minReturnedStr)
-{
-
-    if(this->referenceWords.size()<minReturnedStr)
-    {
-        minReturnedStr = this->referenceWords.size();
-    }
-
-    map<int, vector<string>> distances = this->sortedDistances(src);
-    vector<string> answer;
-    int currentDistance = 0;
-    unsigned int wordsAdded = 0;
-    while(wordsAdded<minReturnedStr)
-    {
-        try{
-            vector<string> currentWords = distances[currentDistance];
-            for(vector<string>::iterator str= currentWords.begin();
-                str!= currentWords.end(); ++str)
-            {
-                answer.push_back(*str);
-            }
-
-            wordsAdded+=currentWords.size();
-
-        }
-        catch(exception ex)
-        {
-            currentDistance++;
-        }
-
-    }
-
-    return answer;
-}
 
 /**
     vector<string> SimilarityAnalizer::closestThan(string src, unsigned int threshold)
