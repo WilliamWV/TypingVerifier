@@ -27,11 +27,13 @@ SOURCES += \
         main.cpp \
         verifier.cpp \
     similarityanalizer.cpp \
-    suggestion.cpp
+    suggestion.cpp \
+    phonetics.cpp
 
 HEADERS += \
         verifier.h \
     similarityanalizer.h \
-    suggestion.h
+    suggestion.h \
+    phonetics.h
 
 FORMS +=
