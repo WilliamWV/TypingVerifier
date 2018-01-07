@@ -3,6 +3,10 @@
 
 #include <vector>
 #include <string>
+#include <cmath>
+
+#include <QString>
+
 
 /**
     Follow IPA definitions
@@ -12,42 +16,42 @@
 
     Bit usage definitions:
 
-    0 -----------------------------------31
+    31------------------------------------0
     xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
 
 
-    vowels: (bit 3 = 0)
-        open: bit 31 = 1
-        open_mid: bit 30 = 1
-        close_mid: bit 29 = 1
-        close: bit 28 = 1
+    vowels: (bit 28 = 0)
+        open: bit 0 = 1
+        open_mid: bit 1 = 1
+        close_mid: bit 2 = 1
+        close: bit 3 = 1
 
-        back: bit 27 = 1
-        central: bit 26 = 1
-        front: bit 25 = 1
-        rounded: bit 24 = 1
+        back: bit 4 = 1
+        central: bit 5 = 1
+        front: bit 6 = 1
+        rounded: bit 7 = 1
 
-    consonant : bit 3 = 1
-        glotal: bit 31 = 1
-        pharyngeal: bit 30 = 1
-        uvular: bit 29 = 1
-        velar: bit 28 = 1
-        palatal: bit 27 = 1
-        retroflec: bit 26 = 1
-        post alveolar: bit 25 = 1
-        alveolar: bit 24 = 1
-        dental: bit 23 = 1
-        labio_dental: bit 22 = 1
-        bilabial: bit 21 = 1
-        lateral_approcimant: bit 20 = 1
-        approximant: bit 19 = 1
-        lateral_fricative: bit 18 = 1
-        fricative: bit 17 = 1
-        tal_flap: bit 16 = 1
-        trill : bit 15 = 1
-        nasal: bit 14 = 1
-        plosive: bit 13 = 1
-        voiced: bit 12 = 1
+    consonant : bit 28 = 1
+        glotal: bit 0 = 1
+        pharyngeal: bit 1 = 1
+        uvular: bit 2 = 1
+        velar: bit 3 = 1
+        palatal: bit 4 = 1
+        retroflec: bit 5 = 1
+        post alveolar: bit 6 = 1
+        alveolar: bit 7 = 1
+        dental: bit 8 = 1
+        labio_dental: bit 9 = 1
+        bilabial: bit 10 = 1
+        lateral_approcimant: bit 11 = 1
+        approximant: bit 12 = 1
+        lateral_fricative: bit 13 = 1
+        fricative: bit 14 = 1
+        tal_flap: bit 15 = 1
+        trill : bit 16 = 1
+        nasal: bit 17 = 1
+        plosive: bit 18 = 1
+        voiced: bit 19 = 1
 */
 
 #define VOWEL                       0x00000000
@@ -174,15 +178,20 @@
 #define PC_LATAPP_PALAT_VOICED      PULMONIC_CONSONANT + PC_LATERAL_APPROXIMANT + PC_PALATAL + PC_VOICED
 #define PC_LATAPP_VELAR_VOICED      PULMONIC_CONSONANT + PC_LATERAL_APPROXIMANT + PC_VELAR + PC_VOICED
 
+
+#define MAX_DISTANCE 100
+#define CONSONANT_VOWEL_DISTANCE MAX_DISTANCE
+#define VOWEL_BIT 28
+
 using namespace std;
 class Phonetics
 {
 public:
-    Phonetics() ;
+    Phonetics(string reference = NULL);
 
     int phonemStringDistance(vector<int> w1, vector<int> w2);
-    int phonemStringDistance(string w1, string w2);
-    static vector<int> pronemsFromString(string src);
+    int phonemStringDistance(QString w1, QString w2);
+    static vector<int> phonemsFromString(QString src);
 
 private:
     int phonemsDistance (int f1, int f2);
@@ -190,12 +199,18 @@ private:
     vector<int> consonants;
     bool isVowel(int s);
 
+    int vowelDistance(int v1, int v2);
     int vowelsSrcPositionDistance(int v1, int v2);
     int vowelsOpeningDistance(int v1, int v2);
     bool isVowelRound(int v);
 
+    int consonantDistance(int c1, int c2);
     int consonantSoundGenerationDist(int c1, int c2);
     int consonantObstructionDist(int c1, int c2);
+
+    int normalizeDistance(int strSize, int rawDistance);
+    bool isBitOn(int src, unsigned int bit);
+
 
     string referenceFile;
 
