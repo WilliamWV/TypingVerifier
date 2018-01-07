@@ -29,6 +29,7 @@
         back: bit 4 = 1
         central: bit 5 = 1
         front: bit 6 = 1
+
         rounded: bit 7 = 1
 
     consonant : bit 28 = 1
@@ -43,7 +44,8 @@
         dental: bit 8 = 1
         labio_dental: bit 9 = 1
         bilabial: bit 10 = 1
-        lateral_approcimant: bit 11 = 1
+
+        lateral_approximant: bit 11 = 1
         approximant: bit 12 = 1
         lateral_fricative: bit 13 = 1
         fricative: bit 14 = 1
@@ -51,6 +53,7 @@
         trill : bit 16 = 1
         nasal: bit 17 = 1
         plosive: bit 18 = 1
+
         voiced: bit 19 = 1
 */
 
@@ -182,6 +185,18 @@
 #define MAX_DISTANCE 100
 #define CONSONANT_VOWEL_DISTANCE MAX_DISTANCE
 #define VOWEL_BIT 28
+#define ROUNDED_VOWEL_BIT 7
+#define VOICED_CONS_BIT 19
+
+#define VOWEL_OPENING_START 0
+#define VOWEL_OPENING_END 3
+#define VOWEL_SRC_START 4
+#define VOWEL_SRC_END 6
+
+#define CONS_SOUNDGEN_START 11
+#define CONS_SOUNDGEN_END 18
+#define CONS_OBSTRUCTION_START 0
+#define CONS_OBSTRUCTION_END 10
 
 using namespace std;
 class Phonetics
@@ -207,10 +222,19 @@ private:
     int consonantDistance(int c1, int c2);
     int consonantSoundGenerationDist(int c1, int c2);
     int consonantObstructionDist(int c1, int c2);
+    bool isVoicedConsonant(int c);
 
     int normalizeDistance(int strSize, int rawDistance);
     bool isBitOn(int src, unsigned int bit);
+    bool isPowerOf2(int src);
 
+    int getOpeningFromVowel(int v);
+    int getSrcFromVowel(int v);
+
+    int getSoundTypeFromCons(int c);
+    int getObstructionFromCons(int c);
+
+    int build_AND_Mask(unsigned int initBit, unsigned int finalBit);
 
     string referenceFile;
 
