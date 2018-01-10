@@ -193,6 +193,10 @@
 #define VOWEL_SRC_START 4
 #define VOWEL_SRC_END 6
 
+#define VOWEL_SRC_COEF 3
+#define VOWEL_OPEN_COEF 5
+#define VOWEL_ROUND_COEF 1
+
 #define CONS_SOUNDGEN_START 11
 #define CONS_SOUNDGEN_END 18
 #define CONS_OBSTRUCTION_START 0
@@ -215,9 +219,9 @@ private:
     vector<int> consonants;
     bool isVowel(int s);
 
-    int vowelDistance(int v1, int v2);
-    int vowelsSrcPositionDistance(int v1, int v2);
-    int vowelsOpeningDistance(int v1, int v2);
+    float vowelDistance(int v1, int v2);
+    float vowelsSrcPositionDistance(int v1, int v2);
+    float vowelsOpeningDistance(int v1, int v2);
     bool isVowelRound(int v);
 
     int consonantDistance(int c1, int c2);
@@ -236,7 +240,7 @@ private:
     int getObstructionFromCons(int c);
 
     int build_AND_Mask(unsigned int initBit, unsigned int finalBit);
-    float bitCenterOfMass(int src, int beg, int end);
+    float bitAveragePos(int src, unsigned int beg, unsigned int end);
     string referenceFile;
 
 };

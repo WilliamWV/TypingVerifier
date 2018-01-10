@@ -87,6 +87,31 @@ bool Phonetics::isVowel(int s)
 }
 
 /**
+    float Phonetics::vowelDistance(int v1, int v2)
+    @brief controls te general behaviour of comparisions
+    between vowels
+
+    @param v1: fisrt vowel
+    @param v2: second vowel
+    @returns distance
+*/
+float Phonetics::vowelDistance(int v1, int v2)
+{
+    float srcDist = this->vowelsSrcPositionDistance(v1, v2);
+    float openDist = this->vowelsOpeningDistance(v1, v2);
+    float roundDist;
+    if(this->isVowelRound(v1) == this->isVowelRound(v2))
+        roundDist = 0;
+    else
+        roundDist = 1;
+
+    return VOWEL_SRC_COEF * srcDist +
+            VOWEL_OPEN_COEF * openDist +
+            VOWEL_ROUND_COEF * roundDist;
+}
+
+
+/**
     float Phonetics::vowelsSrcPositionDistance(int v1, int v2)
     @brief based on the phonological human system source of the
     vowel sound determine a base distance from two IPA symbols
@@ -157,7 +182,7 @@ float Phonetics::bitAveragePos(int src, unsigned int beg, unsigned int end)
     @param v2: second vowel
     @returns floating point value representing a base of the distance
 */
-int Phonetics::vowelsOpeningDistance(int v1, int v2)
+float Phonetics::vowelsOpeningDistance(int v1, int v2)
 {
     float v1Open = this->bitAveragePos(
                     this->getOpeningFromVowel(v1),
