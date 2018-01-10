@@ -210,6 +210,30 @@ bool Phonetics::isVowelRound(int v)
 }
 
 /**
+    float Phonetics::consonantDistance(int c1, int c2)
+    @brief controls te general behaviour of comparisions
+    between consonants
+    @param c1: first consonant
+    @param c2: second consonant
+    @returns distance
+*/
+float Phonetics::consonantDistance(int c1, int c2)
+{
+    float genDist = this->consonantSoundGenerationDist(c1, c2);
+    float obsDist = this->consonantObstructionDist(c1, c2);
+    float voicedDist;
+    if(this->isVoicedConsonant(c1) == this->isVoicedConsonant(c2))
+        voicedDist = 0;
+    else
+        voicedDist = 1;
+
+    return CONS_GENTYPE_COEF * genDist +
+            CONS_OBSTR_COEF * obsDist +
+            CONS_VOICED_COEF * voicedDist;
+}
+
+
+/**
     float Phonetics::consonantSoundGenerationDist(int c1, int c2)
     @brief based on sound generation type, ex: nasal; of consonants
     determine an estimation of distance, once this is not a gradual

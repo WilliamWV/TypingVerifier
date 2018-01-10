@@ -202,6 +202,10 @@
 #define CONS_OBSTRUCTION_START 0
 #define CONS_OBSTRUCTION_END 10
 
+#define CONS_GENTYPE_COEF 5
+#define CONS_OBSTR_COEF 3
+#define CONS_VOICED_COEF 2
+
 
 using namespace std;
 class Phonetics
@@ -209,12 +213,12 @@ class Phonetics
 public:
     Phonetics(string reference = NULL);
 
-    int phonemStringDistance(vector<int> w1, vector<int> w2);
-    int phonemStringDistance(QString w1, QString w2);
+    float phonemStringDistance(vector<int> w1, vector<int> w2);
+    float phonemStringDistance(QString w1, QString w2);
     static vector<int> phonemsFromString(QString src);
 
 private:
-    int phonemsDistance (int f1, int f2);
+    float phonemsDistance (int f1, int f2);
     vector<int> vowels;
     vector<int> consonants;
     bool isVowel(int s);
@@ -224,9 +228,9 @@ private:
     float vowelsOpeningDistance(int v1, int v2);
     bool isVowelRound(int v);
 
-    int consonantDistance(int c1, int c2);
-    int consonantSoundGenerationDist(int c1, int c2);
-    int consonantObstructionDist(int c1, int c2);
+    float consonantDistance(int c1, int c2);
+    float consonantSoundGenerationDist(int c1, int c2);
+    float consonantObstructionDist(int c1, int c2);
     bool isVoicedConsonant(int c);
 
     int normalizeDistance(int strSize, int rawDistance);
