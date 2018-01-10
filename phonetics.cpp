@@ -146,9 +146,32 @@ float Phonetics::bitAveragePos(int src, unsigned int beg, unsigned int end)
     }
 
 }
+
+/**
+    float Phonetics::vowelsSrcPositionDistance(int v1, int v2)
+    @brief based on the mouth opening to generate the vowel,
+    determine a base distance from two IPA symbols, the distance
+    returned may be scaled by some coefficient to make sense
+
+    @param v1: first vowel
+    @param v2: second vowel
+    @returns floating point value representing a base of the distance
+*/
 int Phonetics::vowelsOpeningDistance(int v1, int v2)
 {
+    float v1Open = this->bitAveragePos(
+                    this->getOpeningFromVowel(v1),
+                    VOWEL_OPENING_START,
+                    VOWEL_OPENING_END);
+    float v2Open = this->bitAveragePos(
+                    this->getOpeningFromVowel(v2),
+                    VOWEL_OPENING_START,
+                    VOWEL_OPENING_END);
 
+    if(v2Open == -1 || v1Open == -1)
+        return MAX_DISTANCE;
+
+    return abs(v1Open - v2Open);
 }
 /**
     bool Phonetics::isVowelRound(int v)
