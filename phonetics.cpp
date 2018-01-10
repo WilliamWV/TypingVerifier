@@ -229,7 +229,7 @@ float Phonetics::consonantSoundGenerationDist(int c1, int c2)
     if(c1Gen == c2Gen){
         distance = 0;
     }
-    else if(c1 & c2){
+    else if(c1Gen & c2Gen){
         //there is common characteristics
         distance = 0.5;
     }
@@ -239,9 +239,36 @@ float Phonetics::consonantSoundGenerationDist(int c1, int c2)
     return distance;
 
 }
+
+/**
+    float Phonetics::consonantSoundGenerationDist(int c1, int c2)
+    @brief based on obstruction type, ex: dental; of consonants
+    determine an estimation of distance, once this is not a gradual
+    change like vowels there are just three possible return values
+    that represents no difference, some differences and everything
+    different, this is very similar to
+    float Phonetics::consonantSoundGenerationDist(int c1, int c2)
+    @param c1: first consonant
+    @param c2: second consonant
+    @return distance
+*/
 int Phonetics::consonantObstructionDist(int c1, int c2)
 {
+    int c1Obs = this->getObstructionFromCons(c1);
+    int c2Obs = this->getObstructionFromCons(c2);
 
+    float distance;
+    if(c1Obs == c2Obs){
+        distance = 0;
+    }
+    else if(c1Obs & c2Obs){
+        //there is common characteristics
+        distance = 0.5;
+    }
+    else
+        distance = 1;
+
+    return distance;
 }
 
 /**
