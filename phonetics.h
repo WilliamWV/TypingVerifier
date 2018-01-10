@@ -198,6 +198,7 @@
 #define CONS_OBSTRUCTION_START 0
 #define CONS_OBSTRUCTION_END 10
 
+
 using namespace std;
 class Phonetics
 {
@@ -235,7 +236,7 @@ private:
     int getObstructionFromCons(int c);
 
     int build_AND_Mask(unsigned int initBit, unsigned int finalBit);
-
+    float bitCenterOfMass(int src, int beg, int end);
     string referenceFile;
 
 };

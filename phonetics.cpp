@@ -86,8 +86,64 @@ bool Phonetics::isVowel(int s)
     return (this->isBitOn(s, VOWEL_BIT));
 }
 
-int Phonetics::vowelsSrcPositionDistance(int v1, int v2)
+/**
+    float Phonetics::vowelsSrcPositionDistance(int v1, int v2)
+    @brief based on the phonological human system source of the
+    vowel sound determine a base distance from two IPA symbols
+    based on this characteristic, the distance returned may be
+    scaled by some coefficient to make sense
+
+    @param v1: first vowel
+    @param v2: second vowel
+    @returns floating point value representing a base of the distance
+*/
+float Phonetics::vowelsSrcPositionDistance(int v1, int v2)
 {
+    float v1Src = this->bitAveragePos(
+                    this->getSrcFromVowel(v1),
+                    VOWEL_SRC_START,
+                    VOWEL_SRC_END);
+    float v2Src = this->bitAveragePos(
+                    this->getSrcFromVowel(v2),
+                    VOWEL_SRC_START,
+                    VOWEL_SRC_END);
+
+    if(v2Src == -1 || v1Src == -1)
+        return MAX_DISTANCE;
+
+    return abs(v1Src - v2Src);
+}
+
+/**
+    float Phonetics::bitAveragePos(int src, int beg, int end)
+    @brief determines the average position on the source integer
+    of bits that are equals to one, this will be useful because
+    a IPA symbol can have characteristics that blend various
+    categories
+
+    @param src: source integer to analize
+    @param beg: initial bit to analize
+    @param end: last bit to analize
+    @returns average position of bits on 1
+*/
+float Phonetics::bitAveragePos(int src, unsigned int beg, unsigned int end)
+{
+    float sum = 0;
+    int bitsOn1 = 0;
+    for(int i = beg; i<=end; i++)
+    {
+        if(isBitOn(src, i)){
+            sum+=i;
+            bitsOn1++;
+        }
+    }
+
+    if(bitsOn1>0){
+        return sum/(float) bitsOn1;
+    }
+    else{
+        return -1;
+    }
 
 }
 int Phonetics::vowelsOpeningDistance(int v1, int v2)
