@@ -13,7 +13,7 @@ Phonetics::Phonetics(string reference)
     @param w2, second vector of phonems
 
 */
-int Phonetics::phonemStringDistance(vector<int> w1, vector<int> w2)
+float Phonetics::phonemStringDistance(vector<int> w1, vector<int> w2)
 {
     int rawDistance = 0;
     int minSize = min(w1.size(), w2.size());
@@ -35,7 +35,7 @@ int Phonetics::phonemStringDistance(vector<int> w1, vector<int> w2)
     @param w2: second string
     @returns distance between them
 */
-int Phonetics::phonemStringDistance(QString w1, QString w2)
+float Phonetics::phonemStringDistance(QString w1, QString w2)
 {
     return this->phonemStringDistance(
                 Phonetics.phonemsFromString(w1),
@@ -58,7 +58,7 @@ static Phonetics::vector<int> phonemsFromString(QString src)
     @returns distance between the two phonems
 
 */
-int Phonetics::phonemsDistance (int f1, int f2)
+float Phonetics::phonemsDistance (int f1, int f2)
 {
     if(f1 == f2)
         return 0;
@@ -209,8 +209,34 @@ bool Phonetics::isVowelRound(int v)
     return(this->isBitOn(v, ROUNDED_VOWEL_BIT));
 }
 
-int Phonetics::consonantSoundGenerationDist(int c1, int c2)
+/**
+    float Phonetics::consonantSoundGenerationDist(int c1, int c2)
+    @brief based on sound generation type, ex: nasal; of consonants
+    determine an estimation of distance, once this is not a gradual
+    change like vowels there are just three possible return values
+    that represents no difference, some differences and everything
+    different
+    @param c1: first consonant
+    @param c2: second consonant
+    @return distance
+*/
+float Phonetics::consonantSoundGenerationDist(int c1, int c2)
 {
+    int c1Gen = this->getSoundTypeFromCons(c1);
+    int c2Gen = this->getSoundTypeFromCons(c2);
+
+    float distance;
+    if(c1Gen == c2Gen){
+        distance = 0;
+    }
+    else if(c1 & c2){
+        //there is common characteristics
+        distance = 0.5;
+    }
+    else
+        distance = 1;
+
+    return distance;
 
 }
 int Phonetics::consonantObstructionDist(int c1, int c2)
